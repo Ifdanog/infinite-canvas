@@ -9,6 +9,7 @@ const InfiniteCanvas = () => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [history, setHistory] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
+  const [isZoomed, setIsZoomed] = useState(false);
   const stageRef = useRef(null);
 
   useEffect(() => {
@@ -40,47 +41,85 @@ const InfiniteCanvas = () => {
     if (!currentTool) return;
 
     setDrawing(true);
-    const { x, y } = e.target.getStage().getPointerPosition();
+    const stage = e.target.getStage();
+    const { x, y } = stage.getPointerPosition();
+    const pointerPosition = stage.getPointerPosition();
+    const adjustedPosition = {
+      x: (pointerPosition.x - stage.x()) / stage.scaleX(),
+      y: (pointerPosition.y - stage.y()) / stage.scaleY(),
+    };
 
     if (currentTool === "line") {
       setCurrentShape({
         type: "line",
-        points: [x, y, x, y],
+        points: [
+          adjustedPosition.x,
+          adjustedPosition.y,
+          adjustedPosition.x,
+          adjustedPosition.y,
+        ],
         stroke: "black",
         strokeWidth: 2,
       });
     } else if (currentTool === "circle") {
       setCurrentShape({
         type: "circle",
-        x,
-        y,
+        x: adjustedPosition.x,
+        y: adjustedPosition.y,
         radius: 0,
         stroke: "black",
         strokeWidth: 2,
       });
     } else if (currentTool === "text") {
       const text = window.prompt("Enter text:", "Text");
-      setCurrentShape({ type: "text", x, y, text, fontSize: 20 });
-      addHistory([...shapes, { type: "text", x, y, text, fontSize: 20 }]);
+      setCurrentShape({
+        type: "text",
+        x: adjustedPosition.x,
+        y: adjustedPosition.y,
+        text,
+        fontSize: 20,
+      });
+      addHistory([
+        ...shapes,
+        {
+          type: "text",
+          x: adjustedPosition.x,
+          y: adjustedPosition.y,
+          text,
+          fontSize: 20,
+        },
+      ]);
       setCurrentTool(null); // Reset tool after drawing
       setCurrentShape(null);
     }
+    stageRef.current.setDraggable(false);
   };
 
   const handleMouseMove = (e) => {
     if (!drawing) return;
 
-    const { x, y } = e.target.getStage().getPointerPosition();
+    const stage = e.target.getStage();
+    const pointerPosition = stage.getPointerPosition();
+    const adjustedPosition = {
+      x: (pointerPosition.x - stage.x()) / stage.scaleX(),
+      y: (pointerPosition.y - stage.y()) / stage.scaleY(),
+    };
 
     if (currentTool === "line") {
       const newLine = {
         ...currentShape,
-        points: [currentShape.points[0], currentShape.points[1], x, y],
+        points: [
+          currentShape.points[0],
+          currentShape.points[1],
+          adjustedPosition.x,
+          adjustedPosition.y,
+        ],
       };
       setCurrentShape(newLine);
     } else if (currentTool === "circle") {
       const radius = Math.sqrt(
-        Math.pow(x - currentShape.x, 2) + Math.pow(y - currentShape.y, 2)
+        Math.pow(adjustedPosition.x - currentShape.x, 2) +
+          Math.pow(adjustedPosition.y - currentShape.y, 2)
       );
       const newCircle = { ...currentShape, radius };
       setCurrentShape(newCircle);
@@ -92,8 +131,9 @@ const InfiniteCanvas = () => {
 
     setDrawing(false);
     addHistory([...shapes, currentShape]);
-    setCurrentTool(null); // Reset tool after drawing
+    setCurrentTool(null);
     setCurrentShape(null);
+    stageRef.current.setDraggable(true);
   };
 
   const handleSelectShape = (shape, index) => {
@@ -101,17 +141,23 @@ const InfiniteCanvas = () => {
   };
 
   const handleDragMove = (e, index) => {
+    const stage = e.target.getStage();
     const newShapes = shapes.slice();
-    const { x, y } = e.target.position();
+    const { x, y } = stage.getPointerPosition();
+    const adjustedPosition = {
+      x: (x - stage.x()) / stage.scaleX(),
+      y: (y - stage.y()) / stage.scaleY(),
+    };
+
     if (newShapes[index].type === "line") {
-      const offsetX = x - newShapes[index].points[0];
-      const offsetY = y - newShapes[index].points[1];
+      const offsetX = adjustedPosition.x - newShapes[index].points[0];
+      const offsetY = adjustedPosition.y - newShapes[index].points[1];
       newShapes[index].points = newShapes[index].points.map((point, i) =>
         i % 2 === 0 ? point + offsetX : point + offsetY
       );
     } else {
-      newShapes[index].x = x;
-      newShapes[index].y = y;
+      newShapes[index].x = adjustedPosition.x;
+      newShapes[index].y = adjustedPosition.y;
     }
     setShapes(newShapes);
   };
@@ -131,7 +177,7 @@ const InfiniteCanvas = () => {
   const handleDownload = () => {
     const uri = stageRef.current.toDataURL();
     const link = document.createElement("a");
-    link.download = "canvas.png";
+    link.download = "canvas.jpg";
     link.href = uri;
     document.body.appendChild(link);
     link.click();
@@ -157,7 +203,7 @@ const InfiniteCanvas = () => {
         newShape = { ...selectedShape, x: x + 10, y: y + 10 };
       }
       addHistory([...shapes, newShape]);
-      setSelectedShape(null); // Optionally, deselect after duplication
+      setSelectedShape(null);
     }
   };
 
@@ -276,9 +322,86 @@ const InfiniteCanvas = () => {
     );
   };
 
+  const renderGridLines = () => {
+    const gridSize = 50; // Set the size of the grid squares
+    const width = window.innerWidth * 100; // Stage width
+    const height = window.innerHeight * 100; // Stage height
+    const lines = [];
+
+    // Vertical lines
+    for (let i = 0; i < width / gridSize; i++) {
+      lines.push(
+        <Line
+          key={`v-${i}`}
+          points={[i * gridSize, 0, i * gridSize, height]}
+          stroke="#ccc"
+          strokeWidth={0.5}
+        />
+      );
+    }
+
+    // Horizontal lines
+    for (let i = 0; i < height / gridSize; i++) {
+      lines.push(
+        <Line
+          key={`h-${i}`}
+          points={[0, i * gridSize, width, i * gridSize]}
+          stroke="#ccc"
+          strokeWidth={0.5}
+        />
+      );
+    }
+
+    return lines;
+  };
+
+  const handleWheel = (e) => {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    const oldScale = stage.scaleX();
+    const pointer = stage.getPointerPosition();
+    const scaleBy = 1.05;
+    const newScale = e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+
+    stage.scale({ x: newScale, y: newScale });
+
+    const mousePointTo = {
+      x: (pointer.x - stage.x()) / oldScale,
+      y: (pointer.y - stage.y()) / oldScale,
+    };
+
+    const newPos = {
+      x: pointer.x - mousePointTo.x * newScale,
+      y: pointer.y - mousePointTo.y * newScale,
+    };
+
+    stage.position(newPos);
+    stage.batchDraw();
+
+    setIsZoomed(newScale !== 1); // Update zoom state
+  };
+
+  const handleDragEnd = (e) => {
+    const stage = stageRef.current;
+    const newPos = stage.position();
+    stage.position(newPos);
+  };
+
+  // Calculate initial position to center the grid
+  const initialPosition = {
+    x:
+      window.innerWidth / 2 -
+      (window.innerWidth * 100) / 2 +
+      window.innerWidth / 2,
+    y:
+      window.innerHeight / 2 -
+      (window.innerHeight * 100) / 2 +
+      window.innerHeight / 2,
+  };
+
   return (
-    <div>
-      <div>
+    <div style={{ margin: 0, padding: 0 }}>
+      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1 }}>
         <button onClick={() => setToolAndDeselect("line")}>Line</button>
         <button onClick={() => setToolAndDeselect("circle")}>Circle</button>
         <button onClick={() => setToolAndDeselect("text")}>Text</button>
@@ -292,20 +415,28 @@ const InfiniteCanvas = () => {
       <div
         style={{
           border: "1px solid black",
-          width: "800px",
-          height: "600px",
+          width: "100%",
+          height: "100%",
           overflow: "hidden",
+          margin: 0,
+          padding: 0,
         }}
       >
         <Stage
-          width={800}
-          height={600}
+          width={window.innerWidth}
+          height={window.innerHeight}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           ref={stageRef}
+          draggable={isZoomed}
+          onDragEnd={handleDragEnd}
+          onWheel={handleWheel}
+          x={initialPosition.x}
+          y={initialPosition.y}
         >
           <Layer>
+            {renderGridLines()}
             {shapes.map(renderShapeWithOutline)}
             {currentShape && currentTool === "line" && (
               <Line
