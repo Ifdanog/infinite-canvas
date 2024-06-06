@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Line, Circle, Text } from "react-konva";
+import CircleIcon from "./icons/CircleIcon";
+import ClearIcon from "./icons/ClearIcon";
+import DeleteIcon from "./icons/DeleteIcon";
+import DownloadIcon from "./icons/DownloadIcon";
+import DuplicateIcon from "./icons/DuplicateIcon";
+import LineIcon from "./icons/LineIcon";
+import RedoIcon from "./icons/RedoIcon";
+import TextIcon from "./icons/TextIcon";
+import UndoIcon from "./icons/UndoIcon";
 
 const InfiniteCanvas = () => {
   const [shapes, setShapes] = useState([]);
@@ -402,19 +411,73 @@ const InfiniteCanvas = () => {
   return (
     <div style={{ margin: 0, padding: 0 }}>
       <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1 }}>
-        <button onClick={() => setToolAndDeselect("line")}>Line</button>
-        <button onClick={() => setToolAndDeselect("circle")}>Circle</button>
-        <button onClick={() => setToolAndDeselect("text")}>Text</button>
-        <button onClick={handleDeleteShape}>Delete</button>
-        <button onClick={handleDuplicateShape}>Duplicate</button>
-        <button onClick={handleUndo}>Undo</button>
-        <button onClick={handleRedo}>Redo</button>
-        <button onClick={handleClearCanvas}>Clear</button>
-        <button onClick={handleDownload}>Download</button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "line" ? "bg-violet-500 text-white" : ""}`}
+          onClick={() => setToolAndDeselect("line")}
+        >
+          <LineIcon />
+        </button>
+
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "circle" ? "bg-violet-500 text-white" : ""}`}
+          onClick={() => setToolAndDeselect("circle")}
+        >
+          <CircleIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "text" ? "bg-violet-500 text-white" : ""}`}
+          onClick={() => setToolAndDeselect("text")}
+        >
+          <TextIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "delete" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleDeleteShape}
+        >
+          <DeleteIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "duplicate" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleDuplicateShape}
+        >
+          <DuplicateIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "undo" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleUndo}
+        >
+          <UndoIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "redo" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleRedo}
+        >
+          <RedoIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "clear" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleClearCanvas}
+        >
+          <ClearIcon />
+        </button>
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+  ${currentTool === "download" ? "bg-violet-500 text-white" : ""}`}
+          onClick={handleDownload}
+        >
+          <DownloadIcon />
+        </button>
       </div>
       <div
         style={{
-          border: "1px solid black",
           width: "100%",
           height: "100%",
           overflow: "hidden",
