@@ -10,7 +10,7 @@ import RedoIcon from "./icons/RedoIcon";
 import TextIcon from "./icons/TextIcon";
 import UndoIcon from "./icons/UndoIcon";
 
-const InfiniteCanvas = () => {
+const InfiniteCanvas = ({ showIntro, setShowIntro }) => {
   const [shapes, setShapes] = useState([]);
   const [currentTool, setCurrentTool] = useState(null);
   const [drawing, setDrawing] = useState(false);
@@ -410,9 +410,19 @@ const InfiniteCanvas = () => {
 
   return (
     <div style={{ margin: 0, padding: 0 }}>
-      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1 }}>
+      {!showIntro && (
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          onClick={() => console.log("okay")}
+          className="px-3 cursor-pointer py-2 rounded-md border border-black hover:bg-gray-100 m-4 z-100"
+        >
+          Back
+        </button>
+      )}
+      <div
+        className={` ${!showIntro ? "left-28" : "left-0"} absolute top-4 z-10`}
+      >
+        <button
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "line" ? "bg-violet-500 text-white" : ""}`}
           onClick={() => setToolAndDeselect("line")}
         >
@@ -420,56 +430,56 @@ const InfiniteCanvas = () => {
         </button>
 
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "circle" ? "bg-violet-500 text-white" : ""}`}
           onClick={() => setToolAndDeselect("circle")}
         >
           <CircleIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "text" ? "bg-violet-500 text-white" : ""}`}
           onClick={() => setToolAndDeselect("text")}
         >
           <TextIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "delete" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDeleteShape}
         >
           <DeleteIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "duplicate" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDuplicateShape}
         >
           <DuplicateIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "undo" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleUndo}
         >
           <UndoIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "redo" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleRedo}
         >
           <RedoIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "clear" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleClearCanvas}
         >
           <ClearIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
   ${currentTool === "download" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDownload}
         >
@@ -479,10 +489,13 @@ const InfiniteCanvas = () => {
       <div
         style={{
           width: "100%",
-          height: "100%",
+          height: "100vh",
           overflow: "hidden",
           margin: 0,
           padding: 0,
+          position: "absolute",
+          top: 0,
+          left: 0,
         }}
       >
         <Stage
