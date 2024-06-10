@@ -499,18 +499,14 @@ const InfiniteCanvas = ({ showIntro, setShowIntro }) => {
         }}
       >
         <Stage
-          // width={window.innerWidth}
-          // height={window.innerHeight}
-          // onMouseDown={handleMouseDown}
-          // onMouseMove={handleMouseMove}
-          // onMouseUp={handleMouseUp}
-          // ref={stageRef}
-          // draggable={isZoomed}
-          // onDragEnd={handleDragEnd}
-          // onWheel={handleWheel}
-          // x={initialPosition.x}
-          // y={initialPosition.y}
-          ref={stageRef}
+
+
+
+
+
+
+
+ref={stageRef}
           width={window.innerWidth}
           height={window.innerHeight}
           onMouseDown={handleMouseDown}
