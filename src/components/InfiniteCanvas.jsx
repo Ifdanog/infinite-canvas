@@ -430,56 +430,56 @@ const InfiniteCanvas = ({ showIntro, setShowIntro }) => {
         </button>
 
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "circle" ? "bg-violet-500 text-white" : ""}`}
           onClick={() => setToolAndDeselect("circle")}
         >
           <CircleIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "text" ? "bg-violet-500 text-white" : ""}`}
           onClick={() => setToolAndDeselect("text")}
         >
           <TextIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "delete" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDeleteShape}
         >
           <DeleteIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "duplicate" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDuplicateShape}
         >
           <DuplicateIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "undo" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleUndo}
         >
           <UndoIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "redo" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleRedo}
         >
           <RedoIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "clear" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleClearCanvas}
         >
           <ClearIcon />
         </button>
         <button
-          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer 
+          className={`px-3 py-2 rounded-md ml-4 border border-black hover:bg-gray-100 cursor-pointer
   ${currentTool === "download" ? "bg-violet-500 text-white" : ""}`}
           onClick={handleDownload}
         >
@@ -499,17 +499,27 @@ const InfiniteCanvas = ({ showIntro, setShowIntro }) => {
         }}
       >
         <Stage
+          // width={window.innerWidth}
+          // height={window.innerHeight}
+          // onMouseDown={handleMouseDown}
+          // onMouseMove={handleMouseMove}
+          // onMouseUp={handleMouseUp}
+          // ref={stageRef}
+          // draggable={isZoomed}
+          // onDragEnd={handleDragEnd}
+          // onWheel={handleWheel}
+          // x={initialPosition.x}
+          // y={initialPosition.y}
+          ref={stageRef}
           width={window.innerWidth}
           height={window.innerHeight}
           onMouseDown={handleMouseDown}
+          onTouchStart={handleMouseDown}
           onMouseMove={handleMouseMove}
+          onTouchMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          ref={stageRef}
-          draggable={isZoomed}
-          onDragEnd={handleDragEnd}
-          onWheel={handleWheel}
-          x={initialPosition.x}
-          y={initialPosition.y}
+          onTouchEnd={handleMouseUp}
+          draggable
         >
           <Layer>
             {renderGridLines()}
